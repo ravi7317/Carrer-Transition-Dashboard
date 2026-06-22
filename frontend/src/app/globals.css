@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Theme Base */
+  --background: #080b11;
+  --foreground: #f3f4f6;
+  
+  --page: #0c101b;
+  --card: rgba(15, 22, 38, 0.45);
+  --card-soft: rgba(20, 29, 48, 0.7);
+  --border: rgba(255, 255, 255, 0.08);
+
+  /* Status Colors */
+  --safe: #10b981;       /* Green */
+  --safe-glow: rgba(16, 185, 129, 0.25);
+  
+  --hazard: #f59e0b;     /* Yellow */
+  --hazard-glow: rgba(245, 158, 11, 0.25);
+  
+  --warn: #3b82f6;       /* Blue - used for process/info */
+  --warn-glow: rgba(59, 130, 246, 0.25);
+  
+  --toxic: #ef4444;      /* Red */
+  --toxic-glow: rgba(239, 68, 68, 0.3);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Containers */
+.glass-container {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-container-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-container-hover:hover {
+  background: var(--card-soft);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(8, 11, 17, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom Select & Form Element Overrides to Prevent White-on-White contrast bugs (from Lessons Learned KI) */
+select, input, textarea {
+  background: rgba(13, 19, 33, 0.85) !important;
+  color: var(--foreground) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+select option {
+  background-color: #0b0f19 !important;
+  color: var(--foreground) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--safe) !important;
+  box-shadow: 0 0 10px var(--safe-glow) !important;
+}
+
+/* Glow Elements */
+.glow-safe-border {
+  border-color: var(--safe);
+  box-shadow: 0 0 15px var(--safe-glow);
+}
+
+.glow-hazard-border {
+  border-color: var(--hazard);
+  box-shadow: 0 0 15px var(--hazard-glow);
+}
+
+.glow-toxic-border {
+  border-color: var(--toxic);
+  box-shadow: 0 0 15px var(--toxic-glow);
+}
+
+.glow-warn-border {
+  border-color: var(--warn);
+  box-shadow: 0 0 15px var(--warn-glow);
+}
+
+/* Active Navigation style */
+.nav-link-active {
+  background: rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--safe);
+  color: #ffffff;
+}
+
+/* Status Badges */
+.badge-Applied {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-OA-Received {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-Interview {
+  background-color: rgba(167, 139, 250, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.badge-Offer {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-Rejected {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
