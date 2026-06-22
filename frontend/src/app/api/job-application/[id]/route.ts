@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getGoogleSheetsClient, initSheetHeaders, mapSheetRowToModel, REVERSE_MAPPING, getColumnLetter, SPREADSHEET_ID } from '@/lib/googleSheets';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const appId = parseInt(params.id, 10);
+    const resolvedParams = await params;
+    const appId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
     
     const sheets = await getGoogleSheetsClient();

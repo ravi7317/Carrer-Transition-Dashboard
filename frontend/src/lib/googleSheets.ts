@@ -204,7 +204,7 @@ export async function getNextId(sheetName: string) {
   return ids.length > 0 ? Math.max(...ids) + 1 : 1;
 }
 
-function getColumnLetter(colIdx: number) {
+export function getColumnLetter(colIdx: number) {
   let result = "";
   while (colIdx > 0) {
     let remainder = (colIdx - 1) % 26;
