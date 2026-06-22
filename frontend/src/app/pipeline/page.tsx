@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   GitMerge, Plus, MapPin, ExternalLink, Calendar, FileText, 
-  DollarSign, ChevronLeft, ChevronRight, X, Briefcase, Eye, Send
+  DollarSign, ChevronLeft, ChevronRight, X, Briefcase, Eye, Send, Trash2
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -103,6 +103,16 @@ export default function CompanyPipeline() {
       fetchData();
     } catch (err: any) {
       console.error("Error updating application status:", err);
+    }
+  };
+
+  const handleDeleteApp = async (appId: number) => {
+    if (!window.confirm("Are you sure you want to delete this job application?")) return;
+    try {
+      await api.deleteRow("Job_Applications", "id", appId);
+      fetchData();
+    } catch (err: any) {
+      console.error("Error deleting application:", err);
     }
   };
 
@@ -250,9 +260,14 @@ export default function CompanyPipeline() {
                         <div>
                           <div className="flex items-center justify-between gap-2">
                             <h4 className="text-xs text-white font-extrabold truncate max-w-[130px]">{app.company}</h4>
-                            <span className="text-[9px] text-gray-400 font-bold bg-white/5 border border-white/10 px-2 py-0.5 rounded-md uppercase tracking-widest">
-                              {app.source}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[9px] text-gray-400 font-bold bg-white/5 border border-white/10 px-2 py-0.5 rounded-md uppercase tracking-widest">
+                                {app.source}
+                              </span>
+                              <button onClick={() => handleDeleteApp(app.id)} className="text-gray-500 hover:text-red-400 transition-colors" title="Delete Application">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
                           <p className="text-[11px] text-gray-400 font-semibold mt-1 flex items-center gap-1">
                             <Briefcase className="w-3 h-3 text-safe" />

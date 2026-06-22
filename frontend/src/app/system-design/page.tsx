@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   Cpu, Plus, Edit2, RotateCw, CheckCircle, Clock, 
-  HelpCircle, ChevronRight, Save, BookOpen 
+  HelpCircle, ChevronRight, Save, BookOpen, Trash2
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -107,6 +107,16 @@ export default function SystemDesignTracker() {
       fetchTopics();
     } catch (err) {
       console.error("Error saving notes edit:", err);
+    }
+  };
+
+  const handleDelete = async (topicName: string) => {
+    if (!window.confirm(`Are you sure you want to delete the topic: ${topicName}?`)) return;
+    try {
+      await api.deleteRow("System_Design_Tracker", "topic", topicName);
+      fetchTopics();
+    } catch (err: any) {
+      console.error("Error deleting topic:", err);
     }
   };
 
@@ -373,11 +383,16 @@ export default function SystemDesignTracker() {
 
                 <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider pt-2 border-t border-white/5 flex items-center justify-between">
                   <span>System Design Console</span>
-                  {item.status === "Completed" && (
-                    <span className="text-safe flex items-center gap-0.5">
-                      Ready <CheckCircle className="w-3 h-3" />
-                    </span>
-                  )}
+                  <div className="flex items-center gap-3">
+                    {item.status === "Completed" && (
+                      <span className="text-safe flex items-center gap-0.5">
+                        Ready <CheckCircle className="w-3 h-3" />
+                      </span>
+                    )}
+                    <button onClick={() => handleDelete(item.topic)} className="text-gray-500 hover:text-red-400 transition-colors" title="Delete Topic">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );

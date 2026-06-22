@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   FileCode, Plus, Search, Filter, Calendar, Clock, 
-  Tag, Activity, ListFilter, Award 
+  Tag, Activity, ListFilter, Award, Trash2
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -75,6 +75,18 @@ export default function DSATracker() {
       setMessage(`Error: ${err.message || "Failed to save entry"}`);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this DSA entry?")) return;
+    try {
+      await api.deleteRow("DSA_Tracker", "id", id);
+      setMessage("Entry deleted successfully.");
+      fetchEntries();
+      setTimeout(() => setMessage(""), 4000);
+    } catch (err: any) {
+      setMessage(`Error: ${err.message}`);
     }
   };
 
@@ -337,6 +349,7 @@ export default function DSATracker() {
                   <th className="py-3 px-4">Topic</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Time Taken</th>
+                  <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -377,6 +390,11 @@ export default function DSATracker() {
                         <Clock className="w-3 h-3 text-gray-500" />
                         {row.time_taken} mins
                       </span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 transition-colors" title="Delete Entry">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

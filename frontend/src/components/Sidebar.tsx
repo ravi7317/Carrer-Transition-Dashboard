@@ -12,8 +12,6 @@ import { api } from "@/lib/api";
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   const menuItems = [
     { name: "Dashboard Overview", path: "/", icon: LayoutDashboard },
@@ -25,37 +23,7 @@ export default function Sidebar() {
     { name: "Resumes & Applications", path: "/resumes", icon: FileSpreadsheet },
   ];
 
-  const handleSync = async () => {
-    setSyncing(true);
-    setSyncStatus("Queuing sync...");
-    try {
-      const res = await api.forceSyncSheets();
-      setSyncStatus("Sheets sync queued!");
-      setTimeout(() => setSyncStatus(null), 3000);
-    } catch (err: any) {
-      setSyncStatus("Sync failed");
-      setTimeout(() => setSyncStatus(null), 3000);
-    } finally {
-      setSyncing(false);
-    }
-  };
 
-  const handleReset = async () => {
-    if (!window.confirm("WARNING: Are you sure you want to clear all dashboard records and start fresh? This deletes all local study plans, DSA problem logs, resumes, and job application history. This action cannot be undone.")) {
-      return;
-    }
-    try {
-      setSyncStatus("Clearing data...");
-      await api.resetDatabase();
-      setSyncStatus("Data cleared! Reloading...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-    } catch (err: any) {
-      setSyncStatus("Reset failed");
-      setTimeout(() => setSyncStatus(null), 3000);
-    }
-  };
 
   const navLinks = (
     <div className="flex flex-col justify-between h-[calc(100vh-140px)]">
@@ -81,28 +49,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Sync Button & Profile Summary */}
+      {/* Profile Summary */}
       <div className="px-4 py-4 border-t border-white/5 space-y-3">
-        <button
-          onClick={handleSync}
-          disabled={syncing}
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-safe/10 hover:bg-safe/20 border border-safe/30 text-safe text-xs font-semibold tracking-wide uppercase transition-all disabled:opacity-50"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
-          {syncing ? "Syncing..." : "Backup to Sheets"}
-        </button>
-
-        <button
-          onClick={handleReset}
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold tracking-wide uppercase transition-all"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          Clear & Start Fresh
-        </button>
-
-        {syncStatus && (
-          <p className="text-center text-[10px] text-gray-500 font-medium animate-pulse">{syncStatus}</p>
-        )}
 
         <div className="bg-white/[0.02] border border-white/5 p-3 rounded-lg">
           <div className="flex items-center justify-between text-[11px] text-gray-500 font-semibold mb-1">

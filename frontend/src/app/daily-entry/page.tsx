@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   BookOpen, Plus, Save, Calendar, CheckSquare, Target, Clock, 
-  Code, MessageSquare, History, Award, BookOpenCheck 
+  Code, MessageSquare, History, Award, BookOpenCheck, Trash2
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -131,6 +131,18 @@ export default function DailyStudyPlanner() {
       setMessage(`Error: ${err.message || "Failed to save data"}`);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (date: string) => {
+    if (!window.confirm(`Are you sure you want to delete the entry for ${date}?`)) return;
+    try {
+      await api.deleteRow("Daily_Progress", "date", date);
+      setMessage("Entry deleted successfully.");
+      fetchHistory();
+      setTimeout(() => setMessage(""), 4000);
+    } catch (err: any) {
+      setMessage(`Error: ${err.message}`);
     }
   };
 
@@ -384,6 +396,7 @@ export default function DailyStudyPlanner() {
                   <th className="py-3 px-4">DSA Solved</th>
                   <th className="py-3 px-4">Topics covered</th>
                   <th className="py-3 px-4">Leetcode Links</th>
+                  <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -416,6 +429,11 @@ export default function DailyStudyPlanner() {
                       {row.leetcode_links ? (
                         <a href={row.leetcode_links} target="_blank" rel="noopener noreferrer">{row.leetcode_links}</a>
                       ) : "None"}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button onClick={() => handleDelete(row.date)} className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 transition-colors" title="Delete Entry">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

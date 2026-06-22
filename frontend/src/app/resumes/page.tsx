@@ -73,6 +73,26 @@ export default function ResumesAndApplications() {
     }
   };
 
+  const handleDeleteResume = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this resume version?")) return;
+    try {
+      await api.deleteRow("Resumes", "id", id);
+      fetchData();
+    } catch (err: any) {
+      console.error("Error deleting resume:", err);
+    }
+  };
+
+  const handleDeleteApp = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this application log?")) return;
+    try {
+      await api.deleteRow("Job_Applications", "id", id);
+      fetchData();
+    } catch (err: any) {
+      console.error("Error deleting application:", err);
+    }
+  };
+
   const downloadCSV = () => {
     if (applications.length === 0) return;
     
@@ -268,11 +288,16 @@ export default function ResumesAndApplications() {
                       </div>
 
                       <div className="text-right space-y-1.5 whitespace-nowrap">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold border ${
-                          r.result === "Active" ? "bg-safe/10 border-safe/30 text-safe" : "bg-white/5 border-white/10 text-gray-400"
-                        }`}>
-                          {r.result}
-                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                            r.result === "Active" ? "bg-safe/10 border-safe/30 text-safe" : "bg-white/5 border-white/10 text-gray-400"
+                          }`}>
+                            {r.result}
+                          </span>
+                          <button onClick={() => handleDeleteResume(r.id)} className="text-gray-500 hover:text-red-400 transition-colors" title="Delete Resume">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                         <div className="text-[9px] text-gray-500 font-bold uppercase">
                           Used: <span className="text-white">{count} apps</span> ({rate}% hit rate)
                         </div>
@@ -329,6 +354,7 @@ export default function ResumesAndApplications() {
                   <th className="py-3 px-4">Salary</th>
                   <th className="py-3 px-4">Resume variant</th>
                   <th className="py-3 px-4">Job Details</th>
+                  <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -363,6 +389,11 @@ export default function ResumesAndApplications() {
                       ) : (
                         <span className="text-gray-600 font-bold uppercase text-[9px] tracking-wider">None</span>
                       )}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button onClick={() => handleDeleteApp(row.id)} className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all" title="Delete Application">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

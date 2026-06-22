@@ -269,3 +269,62 @@ export async function upsertRowInSheet(sheetName: string, keyColName: string, ke
   
   return rowData;
 }
+
+export async function deleteRowInSheet(sheetName: string, keyColName: string, keyVal: any) {
+  const sheets = await getGoogleSheetsClient();
+  const headers = await initSheetHeaders(sheets, sheetName);
+  
+  const sheetKeyName = REVERSE_MAPPING[sheetName][keyColName];
+  const keyColIdx = headers.indexOf(sheetKeyName);
+  
+  if (keyColIdx === -1) throw new Error(`Key column ${sheetKeyName} not found in headers`);
+  
+  const colLetter = getColumnLetter(keyColIdx + 1);
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${sheetName}!${colLetter}:${colLetter}`,
+  });
+  
+  const colValues = res.data.values || [];
+  let rowNum = null;
+  
+  for (let i = 0; i < colValues.length; i++) {
+    if (String(colValues[i][0]) === String(keyVal)) {
+      rowNum = i + 1; // 1-based index
+      break;
+    }
+  }
+  
+  if (!rowNum) {
+    throw new Error(`Row not found with ${keyColName}=${keyVal}`);
+  }
+
+  const ss = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  const sheetProps = ss.data.sheets?.find((s: any) => s.properties?.title === sheetName);
+  
+  // Note: sheetId can be 0, so explicitly check undefined
+  if (!sheetProps || sheetProps.properties?.sheetId === undefined) {
+    throw new Error(`Sheet ID not found for ${sheetName}`);
+  }
+  const sheetId = sheetProps.properties.sheetId;
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: SPREADSHEET_ID,
+    requestBody: {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: sheetId,
+              dimension: 'ROWS',
+              startIndex: rowNum - 1, // 0-based inclusive
+              endIndex: rowNum // 0-based exclusive
+            }
+          }
+        }
+      ]
+    }
+  });
+
+  return { success: true };
+}

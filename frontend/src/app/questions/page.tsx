@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   HelpCircle, Plus, Search, Filter, Eye, EyeOff, Tag, 
-  ThumbsUp, Check, Save, Star, ChevronDown, ChevronUp 
+  ThumbsUp, Check, Save, Star, ChevronDown, ChevronUp, Trash2
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -96,6 +96,16 @@ export default function QuestionBank() {
       fetchQuestions();
     } catch (err) {
       console.error("Error updating question confidence:", err);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this question?")) return;
+    try {
+      await api.deleteRow("Interview_Questions", "id", id);
+      fetchQuestions();
+    } catch (err: any) {
+      console.error("Error deleting question:", err);
     }
   };
 
@@ -337,6 +347,13 @@ export default function QuestionBank() {
                             Show Answer
                           </>
                         )}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all ml-1"
+                        title="Delete Question"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>

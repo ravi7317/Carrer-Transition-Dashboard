@@ -97,4 +97,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  // Generic Delete
+  deleteRow: (sheetName: string, keyColName: string, keyVal: any) =>
+    fetchAPI(`/api/delete-row?sheetName=${encodeURIComponent(sheetName)}&keyColName=${encodeURIComponent(keyColName)}&keyVal=${encodeURIComponent(String(keyVal))}`, {
+      method: "DELETE",
+    }),
 };
