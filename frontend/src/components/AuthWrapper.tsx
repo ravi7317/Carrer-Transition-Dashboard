@@ -38,9 +38,11 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     try {
       // Call backend API to verify
       const res = await api.verifyPassword(password);
-      if (res.success) {
+      if (res.success || res.detail === "Authorized") {
         localStorage.setItem("switch_dashboard_auth", "true");
         setIsAuthenticated(true);
+      } else {
+        setError("Invalid password or authentication failed");
       }
     } catch (err: any) {
       setError(err.message || "Invalid dashboard password");
