@@ -13,6 +13,9 @@ export async function getGoogleSheetsClient() {
   // Vercel deployment: read from direct JSON string env var
   if (process.env.GOOGLE_SHEETS_CREDENTIALS_JSON) {
     credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS_JSON);
+    if (credentials.private_key) {
+      credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+    }
   } else {
     // Local development: read from file
     const credentialsPath = process.env.GOOGLE_SHEETS_CREDENTIALS_PATH || './credentials.json';
